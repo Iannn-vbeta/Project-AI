@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fuzzy Exercise Time</title>
+    <script>
+      async function predictTime() {
+        const suhu = parseFloat(document.getElementById("suhu").value);
+        const kelembapan = parseFloat(
+          document.getElementById("kelembapan").value
+        );
+        const kelelahan = parseFloat(
+          document.getElementById("kelelahan").value
+        );
+
+        console.log("Input:", { suhu, kelembapan, kelelahan }); // Debugging input
+
+        try {
+          const response = await fetch("http://127.0.0.1:5000/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              suhu,
+              kelembapan,
+              kelelahan,
+            }),
+          });
+
+          const result = await response.json();
+          console.log("Response:", result); // Debugging response
+
+          if (result.error) {
+            document.getElementById(
+              "result"
+            ).innerText = `Error: ${result.error}`;
+          } else {
+            document.getElementById(
+              "result"
+            ).innerText = `Rekomendasi Waktu Berolahraga: ${
+              result.kategori
+            } (${result.waktu_berolahraga.toFixed(2)})`;
+          }
+        } catch (error) {
+          console.error("Error fetching prediction:", error);
+          document.getElementById("result").innerText =
+            "Terjadi kesalahan. Silakan coba lagi.";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Penentuan Waktu Terbaik untuk Berolahraga</h1>
+    <label>Suhu (°C): </label>
+    <input type="number" id="suhu" min="0" max="40" /><br /><br />
+    <label>Kelembapan (%): </label>
+    <input type="number" id="kelembapan" min="0" max="100" /><br /><br />
+    <label>Tingkat Kelelahan (0-10): </label>
+    <input type="number" id="kelelahan" min="0" max="10" /><br /><br />
+    <button onclick="predictTime()">Prediksi</button>
+    <h2 id="result"></h2>
+  </body>
+</html>
