@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,render_template
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+
 
 app = Flask(__name__)
 
@@ -46,9 +47,16 @@ rules = [
 # Control System
 waktu_berolahraga_ctrl = ctrl.ControlSystem(rules)
 
+# @app.route('/')
+# def index():
+#     return "Welcome to the Fuzzy Logic API"
+
+
 @app.route('/')
-def index():
-    return "Welcome to the Fuzzy Logic API"
+def index_html():
+    return render_template('index.html')
+
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -82,5 +90,8 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=6969)
